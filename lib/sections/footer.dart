@@ -22,25 +22,22 @@ class Footer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'KINETIC_TERMINAL',
+                'PORTFOLIO',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: AppTheme.cyanAccent,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               Text(
-                '© 2024 KINETIC_TERMINAL // STAMP: 2024.05.22',
+                '© 2024 PORTFOLIO // STAMP: 2024.05.22',
                 style: Theme.of(context).textTheme.labelSmall,
               ),
               Row(
                 spacing: 24,
                 children: [
-                  _SocialLink('GITHUB', 'https://github.com/atanu-sabyasachi'),
-                  _SocialLink(
-                    'LINKEDIN',
-                    'https://linkedin.com/in/atanusabyasachi',
-                  ),
-                  _SocialLink('TWITTER', 'https://twitter.com'),
+                  _SocialLink('GITHUB', AppConstants.githubUrl),
+                  _SocialLink('LINKEDIN', AppConstants.linkedinUrl),
+                  // _SocialLink('TWITTER', 'https://twitter.com'),
                 ],
               ),
             ],

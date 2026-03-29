@@ -7,7 +7,7 @@ class AppConstants {
       "A Senior Flutter Developer architecting high-performance mobile ecosystems. I transform complex business logic into seamless, fluid user experiences using modern reactive patterns.";
 
   static const String githubUrl =
-      "https://github.com/atanu-sabyasachi"; // placeholder
+      "https://github.com/Atanu-Sabyasachi"; // placeholder
   static const String linkedinUrl =
       "https://www.linkedin.com/in/atanu-sabyasachi-90b36616a/"; // placeholder
   static const String twitterUrl =

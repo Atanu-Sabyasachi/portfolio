@@ -25,22 +25,42 @@ class KineticNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'KINETIC_TERMINAL'.toUpperCase(),
+            'PORTFOLIO'.toUpperCase(),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: AppTheme.cyanAccent,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
-              fontStyle: FontStyle.italic
+              fontStyle: FontStyle.italic,
             ),
           ),
           Row(
             spacing: 32,
             children: [
-              _NavText('HOME', isActive: activeIndex == 0, onTap: () => onNavigate(0)),
-              _NavText('ABOUT', isActive: activeIndex == 1, onTap: () => onNavigate(1)),
-              _NavText('EXPERIENCE', isActive: activeIndex == 2, onTap: () => onNavigate(2)),
-              _NavText('PROJECTS', isActive: activeIndex == 3, onTap: () => onNavigate(3)),
-              _NavText('CONTACT', isActive: activeIndex == 4, onTap: () => onNavigate(4)),
+              _NavText(
+                'HOME',
+                isActive: activeIndex == 0,
+                onTap: () => onNavigate(0),
+              ),
+              _NavText(
+                'ABOUT',
+                isActive: activeIndex == 1,
+                onTap: () => onNavigate(1),
+              ),
+              _NavText(
+                'EXPERIENCE',
+                isActive: activeIndex == 2,
+                onTap: () => onNavigate(2),
+              ),
+              _NavText(
+                'PROJECTS',
+                isActive: activeIndex == 3,
+                onTap: () => onNavigate(3),
+              ),
+              _NavText(
+                'CONTACT',
+                isActive: activeIndex == 4,
+                onTap: () => onNavigate(4),
+              ),
               const SizedBox(width: 8),
               CustomButton(
                 text: 'RESUME',
@@ -48,7 +68,7 @@ class KineticNavBar extends StatelessWidget {
                 isOutlined: true,
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -81,8 +101,8 @@ class _NavTextState extends State<_NavText> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: widget.isActive || _isHovering 
-                    ? AppTheme.cyanAccent 
+                color: widget.isActive || _isHovering
+                    ? AppTheme.cyanAccent
                     : Colors.transparent,
                 width: 2,
               ),
@@ -92,8 +112,8 @@ class _NavTextState extends State<_NavText> {
           child: Text(
             widget.text,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: widget.isActive || _isHovering 
-                  ? AppTheme.textPrimary 
+              color: widget.isActive || _isHovering
+                  ? AppTheme.textPrimary
                   : AppTheme.textSecondary,
             ),
           ),
