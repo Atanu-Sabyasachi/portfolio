@@ -29,7 +29,7 @@ class Footer extends StatelessWidget {
                 ),
               ),
               Text(
-                '© 2024 PORTFOLIO // STAMP: 2024.05.22',
+                '© 2024 PORTFOLIO // STAMP: ${DateTime.now().year}.${DateTime.now().month}.${DateTime.now().day}',
                 style: Theme.of(context).textTheme.labelSmall,
               ),
               Row(
