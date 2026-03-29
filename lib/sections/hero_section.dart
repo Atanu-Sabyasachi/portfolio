@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../widgets/custom_button.dart';
 import '../core/constants.dart';
 import '../layout/responsive.dart';
+import '../core/audio_manager.dart';
 import 'section_container.dart';
 
 class HeroSection extends StatelessWidget {
@@ -257,19 +258,22 @@ class _StatCard extends StatelessWidget {
   const _StatCard({required this.title, required this.desc});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceHighlight,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 12),
-          Text(desc, style: Theme.of(context).textTheme.bodyMedium),
-        ],
+    return MouseRegion(
+      onEnter: (_) => AudioManager.playCardHover(),
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceHighlight,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 12),
+            Text(desc, style: Theme.of(context).textTheme.bodyMedium),
+          ],
+        ),
       ),
     );
   }
@@ -281,24 +285,27 @@ class _StatSummaryCard extends StatelessWidget {
   const _StatSummaryCard({required this.value, required this.label});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceHighlight,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: Theme.of(
-              context,
-            ).textTheme.displayMedium?.copyWith(color: AppTheme.cyanAccent),
-          ),
-          const SizedBox(height: 8),
-          Text(label, style: Theme.of(context).textTheme.labelSmall),
-        ],
+    return MouseRegion(
+      onEnter: (_) => AudioManager.playCardHover(),
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceHighlight,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              value,
+              style: Theme.of(
+                context,
+              ).textTheme.displayMedium?.copyWith(color: AppTheme.cyanAccent),
+            ),
+            const SizedBox(height: 8),
+            Text(label, style: Theme.of(context).textTheme.labelSmall),
+          ],
+        ),
       ),
     );
   }

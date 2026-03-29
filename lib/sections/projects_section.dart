@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/constants.dart';
+import '../core/audio_manager.dart';
 import '../widgets/section_title.dart';
 import '../data/portfolio_data.dart';
 import '../models/project_item.dart';
@@ -183,7 +184,10 @@ class _AppCardState extends State<_AppCard> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovering = true),
+      onEnter: (_) {
+        setState(() => _isHovering = true);
+        AudioManager.playCardHover();
+      },
       onExit: (_) => setState(() => _isHovering = false),
       child: GestureDetector(
         onTap: () => launchUrl(Uri.parse(AppConstants.githubUrl)),
@@ -261,7 +265,10 @@ class _PackageCardState extends State<_PackageCard> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovering = true),
+      onEnter: (_) {
+        setState(() => _isHovering = true);
+        AudioManager.playCardHover();
+      },
       onExit: (_) => setState(() => _isHovering = false),
       child: GestureDetector(
         onTap: () => launchUrl(

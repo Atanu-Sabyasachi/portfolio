@@ -8,8 +8,11 @@ import 'sections/experience_section.dart';
 import 'sections/projects_section.dart';
 import 'sections/footer.dart';
 import 'widgets/crt_overlay.dart';
+import 'core/audio_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AudioManager.init();
   runApp(const PortfolioApp());
 }
 
@@ -54,6 +57,8 @@ class _MainLayoutState extends State<MainLayout> {
     _scrollController.addListener(_onScroll);
   }
 
+  int _lastNotificationIndex = 0;
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -62,11 +67,21 @@ class _MainLayoutState extends State<MainLayout> {
   }
 
   void _onScroll() {
-    // This is optional logic to highlight active section based on scroll offset.
-    // For pure smooth scrolling, we just let it run.
+    // Determine which section is currently most visible
+    double scrollPos = _scrollController.offset;
+    // Rough estimate of section transitions (around every 800-1000 pixels)
+    // A better way is using keys, but for a quick immersive sound:
+    int index = (scrollPos / 900).floor().clamp(0, 4);
+    if (index != _lastNotificationIndex) {
+      _lastNotificationIndex = index;
+      AudioManager.playNotification();
+    }
   }
 
   void _scrollTo(int index) {
+    if (_activeIndex != index) {
+      AudioManager.playTransition();
+    }
     setState(() => _activeIndex = index);
     if (_sectionKeys[index].currentContext != null) {
       Scrollable.ensureVisible(

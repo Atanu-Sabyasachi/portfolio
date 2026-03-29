@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/constants.dart';
+import '../core/audio_manager.dart';
 import '../widgets/section_title.dart';
 import '../core/visibility_animator.dart';
 import '../widgets/glitch_text.dart';
@@ -333,7 +334,10 @@ class _ProgressCardState extends State<_ProgressCard> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
+      onEnter: (_) {
+        setState(() => _isHovering = true);
+        AudioManager.playCardHover();
+      },
       onExit: (_) => setState(() => _isHovering = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -424,29 +428,32 @@ class _SoftSkillRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceHighlight,
-            borderRadius: BorderRadius.circular(8),
+    return MouseRegion(
+      onEnter: (_) => AudioManager.playCardHover(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceHighlight,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: AppTheme.cyanAccent),
           ),
-          child: Icon(icon, color: AppTheme.cyanAccent),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(desc, style: Theme.of(context).textTheme.bodyMedium),
-            ],
+          const SizedBox(width: 24),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text(desc, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

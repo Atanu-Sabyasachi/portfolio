@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/theme.dart';
+import '../core/audio_manager.dart';
 import '../data/portfolio_data.dart';
 import '../models/experience_item.dart';
 import '../core/visibility_animator.dart';
@@ -100,7 +101,10 @@ class _ExperienceRowState extends State<_ExperienceRow> {
           Expanded(
             flex: 2,
             child: MouseRegion(
-              onEnter: (_) => setState(() => _isHovering = true),
+              onEnter: (_) {
+                setState(() => _isHovering = true);
+                AudioManager.playCardHover();
+              },
               onExit: (_) => setState(() => _isHovering = false),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
