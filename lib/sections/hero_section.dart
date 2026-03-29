@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../widgets/custom_button.dart';
 import '../core/constants.dart';
-import '../core/animations.dart';
+import '../layout/responsive.dart';
 import 'section_container.dart';
 
 class HeroSection extends StatelessWidget {
@@ -16,124 +16,68 @@ class HeroSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 6,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.surfaceHighlight,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      color: AppTheme.cyanAccent,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  )
-                                  .animate(
-                                    onPlay: (controller) => controller.repeat(),
-                                  )
-                                  .shimmer(
-                                    duration: 2000.ms,
-                                    color: Colors.white,
-                                  )
-                                  .fadeIn(duration: 500.ms),
-                              const SizedBox(width: 8),
-                              Text(
-                                'AVAILABLE FOR NEW PROJECTS',
-                                style: Theme.of(context).textTheme.labelSmall,
-                              ),
-                            ],
-                          ),
-                        )
-                        .animate()
-                        .fadeIn(delay: 200.ms)
-                        .slideX(begin: -0.1, duration: 400.ms),
-                    const SizedBox(height: 32),
-                    RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.displayLarge,
-                            children: const [
-                              TextSpan(text: 'CRAFTING '),
-                              TextSpan(
-                                text: 'FLUID\n',
-                                style: TextStyle(
-                                  color: AppTheme.cyanAccent,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                              TextSpan(text: 'EXPERIENCES.'),
-                            ],
-                          ),
-                        )
-                        .animate()
-                        .fadeIn(delay: 400.ms)
-                        .slideY(begin: 0.1, duration: 600.ms),
-                    const SizedBox(height: 32),
-                    SizedBox(
-                      width: 500,
-                      child: Text(
-                        AppConstants.myShortDescription,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ).animate().fadeIn(delay: 600.ms),
-                    const SizedBox(height: 48),
-                    Row(
-                      children: AnimationCore.stagger([
-                        CustomButton(
-                          text: 'VIEW PROJECTS',
-                          icon: Icons.arrow_forward_rounded,
-                          onPressed: () =>
-                              launchUrl(Uri.parse(AppConstants.githubUrl)),
-                        ),
-                        const SizedBox(width: 24),
-                        CustomButton(
-                          text: 'HIRE ME',
-                          isOutlined: true,
-                          onPressed: () =>
-                              launchUrl(Uri.parse(AppConstants.linkedinUrl)),
-                        ),
-                      ], interval: 200.ms).animate(delay: 800.ms).fadeIn(),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: _buildTerminalSnippet(context)
+          if (Responsive.isMobile(context))
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeroContent(context),
+                const SizedBox(height: 48),
+                _buildTerminalSnippet(context)
                     .animate()
                     .fadeIn(delay: 1000.ms)
-                    .slideX(begin: 0.1, duration: 600.ms),
-              ),
-            ],
-          ),
+                    .slideY(begin: 0.1, duration: 600.ms),
+              ],
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: _buildHeroContent(context),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: _buildTerminalSnippet(context)
+                      .animate()
+                      .fadeIn(delay: 1000.ms)
+                      .slideX(begin: 0.1, duration: 600.ms),
+                ),
+              ],
+            ),
           const SizedBox(height: 80),
-          IntrinsicHeight(
-            child: Row(
-              children: AnimationCore.stagger(
-                [
+          if (Responsive.isMobile(context))
+            Column(
+              children: [
+                _StatCard(
+                  title: 'System Architecture',
+                  desc:
+                      'Building scalable apps using BLoC, Provider, and Clean Architecture principles.',
+                ).animate(delay: 1200.ms).fadeIn().slideY(begin: 0.2),
+                const SizedBox(height: 16),
+                _StatSummaryCard(
+                  value: '04+',
+                  label: 'YEARS OF EXPERIENCE',
+                ).animate(delay: 1400.ms).fadeIn().slideY(begin: 0.2),
+                const SizedBox(height: 16),
+                _StatSummaryCard(
+                  value: '25+',
+                  label: 'APPS DEPLOYED',
+                ).animate(delay: 1600.ms).fadeIn().slideY(begin: 0.2),
+              ],
+            )
+          else
+            IntrinsicHeight(
+              child: Row(
+                children: [
                   Expanded(
                     flex: 3,
                     child: _StatCard(
                       title: 'System Architecture',
                       desc:
                           'Building scalable apps using BLoC, Provider, and Clean Architecture principles.',
-                    ),
+                    ).animate(delay: 1200.ms).fadeIn().slideY(begin: 0.2),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
@@ -141,7 +85,7 @@ class HeroSection extends StatelessWidget {
                     child: _StatSummaryCard(
                       value: '04+',
                       label: 'YEARS OF EXPERIENCE',
-                    ),
+                    ).animate(delay: 1400.ms).fadeIn().slideY(begin: 0.2),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
@@ -149,15 +93,100 @@ class HeroSection extends StatelessWidget {
                     child: _StatSummaryCard(
                       value: '25+',
                       label: 'APPS DEPLOYED',
-                    ),
+                    ).animate(delay: 1600.ms).fadeIn().slideY(begin: 0.2),
                   ),
                 ],
-                interval: 200.ms,
-              ).animate(delay: 1200.ms).fadeIn().slideY(begin: 0.2),
+              ),
             ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildHeroContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceHighlight,
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.cyanAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                      .animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(duration: 2000.ms, color: Colors.white)
+                      .fadeIn(duration: 500.ms),
+                  const SizedBox(width: 8),
+                  Text(
+                    'AVAILABLE FOR NEW PROJECTS',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ),
+            )
+            .animate()
+            .fadeIn(delay: 200.ms)
+            .slideX(begin: -0.1, duration: 400.ms),
+        const SizedBox(height: 32),
+        RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  fontSize: Responsive.isMobile(context) ? 48 : 96,
+                  height: 1.1,
+                ),
+                children: const [
+                  TextSpan(text: 'CRAFTING '),
+                  TextSpan(
+                    text: 'FLUID\n',
+                    style: TextStyle(
+                      color: AppTheme.cyanAccent,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  TextSpan(text: 'EXPERIENCES.'),
+                ],
+              ),
+            )
+            .animate()
+            .fadeIn(delay: 400.ms)
+            .slideY(begin: 0.1, duration: 600.ms),
+        const SizedBox(height: 32),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Text(
+            AppConstants.myShortDescription,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ).animate(delay: 600.ms).fadeIn(),
+        const SizedBox(height: 48),
+        Wrap(
+          spacing: 24,
+          runSpacing: 16,
+          children: [
+            CustomButton(
+              text: 'VIEW PROJECTS',
+              icon: Icons.arrow_forward_rounded,
+              onPressed: () => launchUrl(Uri.parse(AppConstants.githubUrl)),
+            ).animate(delay: 800.ms).fadeIn().slideX(begin: -0.1),
+            CustomButton(
+              text: 'HIRE ME',
+              isOutlined: true,
+              onPressed: () => launchUrl(Uri.parse(AppConstants.linkedinUrl)),
+            ).animate(delay: 1000.ms).fadeIn().slideX(begin: -0.1),
+          ],
+        ),
+      ],
     );
   }
 
