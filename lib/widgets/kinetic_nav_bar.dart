@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/constants.dart';
+import '../core/audio_manager.dart';
 import 'custom_button.dart';
 
 class KineticNavBar extends StatelessWidget {
@@ -62,6 +63,8 @@ class KineticNavBar extends StatelessWidget {
                 onTap: () => onNavigate(4),
               ),
               const SizedBox(width: 8),
+              _SoundToggle(),
+              const SizedBox(width: 8),
               CustomButton(
                 text: 'RESUME',
                 onPressed: () => launchUrl(Uri.parse(AppConstants.resumeUrl)),
@@ -93,10 +96,16 @@ class _NavTextState extends State<_NavText> {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovering = true),
+      onEnter: (_) {
+        setState(() => _isHovering = true);
+        AudioManager.playHover();
+      },
       onExit: (_) => setState(() => _isHovering = false),
       child: GestureDetector(
-        onTap: widget.onTap,
+        onTap: () {
+          widget.onTap();
+          AudioManager.playClick();
+        },
         child: Container(
           decoration: BoxDecoration(
             border: Border(
@@ -116,6 +125,64 @@ class _NavTextState extends State<_NavText> {
                   ? AppTheme.textPrimary
                   : AppTheme.textSecondary,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SoundToggle extends StatefulWidget {
+  @override
+  State<_SoundToggle> createState() => _SoundToggleState();
+}
+
+class _SoundToggleState extends State<_SoundToggle> {
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            AudioManager.toggleMute();
+          });
+          if (!AudioManager.isMuted) {
+            AudioManager.playClick();
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: AudioManager.isMuted
+                  ? AppTheme.textMuted
+                  : AppTheme.cyanAccent,
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                AudioManager.isMuted ? Icons.volume_off : Icons.volume_up,
+                size: 14,
+                color: AudioManager.isMuted
+                    ? AppTheme.textMuted
+                    : AppTheme.cyanAccent,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                AudioManager.isMuted ? 'SOUND: OFF' : 'SOUND: ON',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 10,
+                  color: AudioManager.isMuted
+                      ? AppTheme.textMuted
+                      : AppTheme.cyanAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ),
