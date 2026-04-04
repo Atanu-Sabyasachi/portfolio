@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/constants.dart';
 import '../core/audio_manager.dart';
-import 'custom_button.dart';
+import '../layout/responsive.dart';
 
 class KineticNavBar extends StatelessWidget {
   final Function(int) onNavigate;
@@ -17,62 +16,113 @@ class KineticNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.horizontalPadding,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24 : AppConstants.horizontalPadding,
         vertical: 24,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'PORTFOLIO'.toUpperCase(),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: AppTheme.cyanAccent,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          Row(
-            spacing: 32,
-            children: [
-              _NavText(
-                'HOME',
-                isActive: activeIndex == 0,
-                onTap: () => onNavigate(0),
-              ),
-              _NavText(
-                'ABOUT',
-                isActive: activeIndex == 1,
-                onTap: () => onNavigate(1),
-              ),
-              _NavText(
-                'EXPERIENCE',
-                isActive: activeIndex == 2,
-                onTap: () => onNavigate(2),
-              ),
-              _NavText(
-                'PROJECTS',
-                isActive: activeIndex == 3,
-                onTap: () => onNavigate(3),
-              ),
-              _NavText(
-                'CONTACT',
-                isActive: activeIndex == 4,
-                onTap: () => onNavigate(4),
-              ),
-              const SizedBox(width: 8),
-              _SoundToggle(),
-              const SizedBox(width: 8),
-              CustomButton(
-                text: 'RESUME',
-                onPressed: () => launchUrl(Uri.parse(AppConstants.resumeUrl)),
-                isOutlined: true,
-              ),
-            ],
-          ),
+          _buildLogo(context),
+          if (isMobile)
+            Row(
+              children: [
+                _SoundToggle(),
+                const SizedBox(width: 16),
+                _buildMobileMenu(context),
+              ],
+            )
+          else
+            _buildDesktopMenu(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLogo(BuildContext context) {
+    return Text(
+      'PORTFOLIO'.toUpperCase(),
+      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: AppTheme.cyanAccent,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
+            fontStyle: FontStyle.italic,
+          ),
+    );
+  }
+
+  Widget _buildDesktopMenu(BuildContext context) {
+    return Row(
+      spacing: 32,
+      children: [
+        _NavText(
+          'HOME',
+          isActive: activeIndex == 0,
+          onTap: () => onNavigate(0),
+        ),
+        _NavText(
+          'ABOUT',
+          isActive: activeIndex == 1,
+          onTap: () => onNavigate(1),
+        ),
+        _NavText(
+          'EXPERIENCE',
+          isActive: activeIndex == 2,
+          onTap: () => onNavigate(2),
+        ),
+        _NavText(
+          'PROJECTS',
+          isActive: activeIndex == 3,
+          onTap: () => onNavigate(3),
+        ),
+        _NavText(
+          'CONTACT',
+          isActive: activeIndex == 4,
+          onTap: () => onNavigate(4),
+        ),
+        const SizedBox(width: 8),
+        const SizedBox(width: 8),
+        _SoundToggle(),
+      ],
+    );
+  }
+
+  Widget _buildMobileMenu(BuildContext context) {
+    return PopupMenuButton<int>(
+      onSelected: onNavigate,
+      color: AppTheme.surface,
+      icon: const Icon(Icons.menu_rounded, color: AppTheme.cyanAccent),
+      offset: const Offset(0, 50),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: const BorderSide(color: AppTheme.borderSide),
+      ),
+      itemBuilder: (context) => [
+        _buildPopupItem(context, 0, 'HOME'),
+        _buildPopupItem(context, 1, 'ABOUT'),
+        _buildPopupItem(context, 2, 'EXPERIENCE'),
+        _buildPopupItem(context, 3, 'PROJECTS'),
+        _buildPopupItem(context, 4, 'CONTACT'),
+      ],
+    );
+  }
+
+  PopupMenuItem<int> _buildPopupItem(
+    BuildContext context,
+    int index,
+    String label,
+  ) {
+    return PopupMenuItem(
+      value: index,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: activeIndex == index
+                  ? AppTheme.cyanAccent
+                  : AppTheme.textPrimary,
+            ),
       ),
     );
   }
@@ -111,7 +161,7 @@ class _NavTextState extends State<_NavText> {
             border: Border(
               bottom: BorderSide(
                 color: widget.isActive || _isHovering
-                    ? AppTheme.cyanAccent
+                    ? AppTheme.magentaAccent
                     : Colors.transparent,
                 width: 2,
               ),

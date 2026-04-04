@@ -8,6 +8,7 @@ import '../widgets/section_title.dart';
 import '../data/portfolio_data.dart';
 import '../models/project_item.dart';
 import '../core/visibility_animator.dart';
+import '../layout/responsive.dart';
 import 'section_container.dart';
 
 class ProjectsSection extends StatelessWidget {
@@ -19,72 +20,108 @@ class ProjectsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VisibilityAnimator(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'DIRECTORY / OPEN_SOURCE_PROJECTS',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: AppTheme.textMuted),
-                ),
-                const SizedBox(height: 16),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displayLarge?.copyWith(fontSize: 80),
-                    children: [
-                      const TextSpan(text: 'PROJECTS\n'),
-                      TextSpan(
-                        text: '& OPEN_SOURCE',
-                        style: TextStyle(color: AppTheme.textPrimary),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: 600,
-                  child: Text(
-                    'A curated selection of architecture solutions, digital products, and production-grade tools built with technical precision.',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          VisibilityAnimator(child: _buildHeader(context)),
           const SizedBox(height: 80),
-
           VisibilityAnimator(delay: 200.ms, child: _buildAppGrid(context)),
-
           const SizedBox(height: 120),
-
-          VisibilityAnimator(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SectionTitle(title: 'OPEN SOURCE ECOSYSTEM'),
-                SizedBox(
-                  width: 600,
-                  child: Text(
-                    'Extending the Flutter & Dart capabilities with modular, high-performance packages used by developers worldwide.',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          VisibilityAnimator(child: _buildProjectSubHeader(context)),
           const SizedBox(height: 64),
-
           VisibilityAnimator(delay: 200.ms, child: _buildPackagesGrid(context)),
         ],
       ),
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'DIRECTORY / OPEN_SOURCE_PROJECTS',
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: AppTheme.textMuted),
+        ),
+        const SizedBox(height: 16),
+        RichText(
+          text: TextSpan(
+            style: Theme.of(
+              context,
+            ).textTheme.displayLarge?.copyWith(
+                  fontSize: isMobile ? 48 : 80,
+                ),
+            children: [
+              const TextSpan(text: 'PROJECTS\n'),
+              const TextSpan(
+                text: '& OPEN_SOURCE',
+                style: TextStyle(color: AppTheme.orangeAccent),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Text(
+            'A curated selection of architecture solutions, digital products, and production-grade tools built with technical precision.',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProjectSubHeader(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionTitle(title: 'OPEN SOURCE ECOSYSTEM'),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Text(
+            'Extending the Flutter & Dart capabilities with modular, high-performance packages used by developers worldwide.',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAppGrid(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
+    if (isMobile) {
+      return Column(
+        children: const [
+          _AppCard(title: 'Banking App', desc: '', isLarge: true),
+          SizedBox(height: 24),
+          _AppCard(
+            title: 'Nigam Lahari',
+            desc:
+                'High-performance audio streaming platform with low-latency playback buffers.',
+            isLarge: true,
+          ),
+          SizedBox(height: 24),
+          _AppCard(
+            title: 'TNS Health',
+            desc:
+                'Integrated patient management system for clinical synchronization.',
+          ),
+          SizedBox(height: 24),
+          _AppCard(
+            title: 'Habbit Tracker',
+            desc:
+                'Algorithmic progress tracking for gamified habit-feedback loops.',
+          ),
+          SizedBox(height: 24),
+          _AppCard(
+            title: 'NSS Puri',
+            desc:
+                'Community mobilization platform for volunteer coordination.',
+          ),
+        ],
+      );
+    }
     return Column(
       children: [
         Row(
@@ -138,14 +175,25 @@ class ProjectsSection extends StatelessWidget {
   }
 
   Widget _buildPackagesGrid(BuildContext context) {
+    int crossAxisCount = 3;
+    double aspectRatio = 1.6;
+    
+    if (Responsive.isMobile(context)) {
+      crossAxisCount = 1;
+      aspectRatio = 1.8;
+    } else if (Responsive.isTablet(context)) {
+      crossAxisCount = 2;
+      aspectRatio = 1.4;
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 24,
         mainAxisSpacing: 24,
-        childAspectRatio: 1.6,
+        childAspectRatio: aspectRatio,
       ),
       itemCount: PortfolioData.openSourcePackages.length,
       itemBuilder: (context, index) {
@@ -199,16 +247,26 @@ class _AppCardState extends State<_AppCard> {
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             color: AppTheme.surfaceHighlight,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _isHovering ? AppTheme.cyanAccent : Colors.transparent,
+              color: _isHovering ? AppTheme.magentaAccent : Colors.transparent,
+            ),
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                AppTheme.surfaceHighlight,
+                _isHovering 
+                  ? AppTheme.deepIndigo.withValues(alpha: 0.3)
+                  : AppTheme.surfaceHighlight,
+              ],
             ),
             boxShadow: _isHovering
                 ? [
                     BoxShadow(
-                      color: AppTheme.cyanAccent.withValues(alpha: 0.15),
-                      blurRadius: 30,
-                      spreadRadius: 0,
+                      color: AppTheme.magentaAccent.withValues(alpha: 0.2),
+                      blurRadius: 40,
+                      spreadRadius: -10,
                     ),
                   ]
                 : [],
@@ -221,8 +279,9 @@ class _AppCardState extends State<_AppCard> {
                   widget.title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: _isHovering
-                        ? AppTheme.cyanAccent
+                        ? AppTheme.magentaAccent
                         : AppTheme.textPrimary,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -236,8 +295,9 @@ class _AppCardState extends State<_AppCard> {
                   widget.title,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     color: _isHovering
-                        ? AppTheme.cyanAccent
+                        ? AppTheme.magentaAccent
                         : AppTheme.textPrimary,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
@@ -280,16 +340,26 @@ class _PackageCardState extends State<_PackageCard> {
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             color: AppTheme.surfaceHighlight,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _isHovering ? AppTheme.cyanAccent : AppTheme.borderSide,
+              color: _isHovering ? AppTheme.orangeAccent : AppTheme.borderSide,
+            ),
+            gradient: LinearGradient(
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+              colors: [
+                AppTheme.surfaceHighlight,
+                _isHovering 
+                  ? AppTheme.deepIndigo.withValues(alpha: 0.2)
+                  : AppTheme.surfaceHighlight,
+              ],
             ),
             boxShadow: _isHovering
                 ? [
                     BoxShadow(
-                      color: AppTheme.cyanAccent.withValues(alpha: 0.1),
+                      color: AppTheme.orangeAccent.withValues(alpha: 0.15),
                       blurRadius: 20,
-                      spreadRadius: -5,
+                      spreadRadius: 0,
                     ),
                   ]
                 : [],
@@ -301,8 +371,8 @@ class _PackageCardState extends State<_PackageCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Icon(
-                    Icons.archive,
-                    color: _isHovering ? Colors.white : AppTheme.cyanAccent,
+                    Icons.inventory_2_outlined,
+                    color: _isHovering ? Colors.white : AppTheme.orangeAccent,
                   ),
                   Text(
                     'PACKAGE',
@@ -313,7 +383,10 @@ class _PackageCardState extends State<_PackageCard> {
               const SizedBox(height: 24),
               Text(
                 widget.pkg.title,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: _isHovering ? AppTheme.orangeAccent : AppTheme.textPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
@@ -338,7 +411,8 @@ class _PackageCardState extends State<_PackageCard> {
                     Text(
                       '>',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.cyanAccent,
+                        color: AppTheme.orangeAccent,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(width: 8),

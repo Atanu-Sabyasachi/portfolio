@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/constants.dart';
+import '../layout/responsive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.horizontalPadding,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24 : AppConstants.horizontalPadding,
         vertical: 40,
       ),
       child: Center(
@@ -18,8 +21,12 @@ class Footer extends StatelessWidget {
           constraints: const BoxConstraints(
             maxWidth: AppConstants.desktopMaxWidth,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Flex(
+            direction: isMobile ? Axis.vertical : Axis.horizontal,
+            mainAxisAlignment: isMobile 
+                ? MainAxisAlignment.center 
+                : MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'PORTFOLIO',
@@ -28,16 +35,18 @@ class Footer extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                 ),
               ),
+              if (isMobile) const SizedBox(height: 24),
               Text(
-                '© 2024 PORTFOLIO // STAMP: ${DateTime.now().year}.${DateTime.now().month}.${DateTime.now().day}',
+                '© ${DateTime.now().year} PORTFOLIO // STAMP: ${DateTime.now().year}.${DateTime.now().month}.${DateTime.now().day}',
                 style: Theme.of(context).textTheme.labelSmall,
               ),
+              if (isMobile) const SizedBox(height: 24),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 spacing: 24,
                 children: [
                   _SocialLink('GITHUB', AppConstants.githubUrl),
                   _SocialLink('LINKEDIN', AppConstants.linkedinUrl),
-                  // _SocialLink('TWITTER', 'https://twitter.com'),
                 ],
               ),
             ],
@@ -67,10 +76,13 @@ class _SocialLinkState extends State<_SocialLink> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
-      child: Text(
-        widget.title,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: _isHovering ? AppTheme.cyanAccent : AppTheme.textSecondary,
+      child: GestureDetector(
+        onTap: () => launchUrl(Uri.parse(widget.url)),
+        child: Text(
+          widget.title,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: _isHovering ? AppTheme.cyanAccent : AppTheme.textSecondary,
+              ),
         ),
       ),
     );

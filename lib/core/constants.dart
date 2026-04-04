@@ -12,8 +12,7 @@ class AppConstants {
       "https://www.linkedin.com/in/atanu-sabyasachi-90b36616a/"; // placeholder
   static const String twitterUrl =
       "https://twitter.com/atanu-sabyasachi"; // placeholder
-  static const String resumeUrl =
-      "https://example.com/resume.pdf"; // placeholder
+  static const String resumeUrl = "assets/resume-Atanu Sabyasachi Jena.pdf";
 
   static const double desktopMaxWidth = 1200.0;
   static const double horizontalPadding = 80.0;

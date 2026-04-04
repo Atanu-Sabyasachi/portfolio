@@ -5,6 +5,8 @@ import '../core/audio_manager.dart';
 import '../data/portfolio_data.dart';
 import '../models/experience_item.dart';
 import '../core/visibility_animator.dart';
+import '../layout/responsive.dart';
+import '../core/game_state_manager.dart';
 import 'section_container.dart';
 
 class ExperienceSection extends StatelessWidget {
@@ -17,57 +19,84 @@ class ExperienceSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           VisibilityAnimator(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SYSTEM_LOG / PROFESSIONAL_PATH',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: AppTheme.textMuted),
-                ),
-                const SizedBox(height: 16),
-                RichText(
-                  text: TextSpan(
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displayLarge?.copyWith(fontSize: 80),
-                    children: [
-                      const TextSpan(text: 'ENGINEERING\n'),
-                      TextSpan(
-                        text: 'EXPERIENCES',
-                        style: TextStyle(
-                          color: AppTheme.textSecondary.withValues(alpha: 0.5),
-                        ),
+            child: Builder(
+              builder: (context) {
+                // Trigger achievement on reveal
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  GameProvider.of(context).unlockAchievement('THE ARCHITECTURAL SCOUT');
+                });
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'SYSTEM_LOG / PROFESSIONAL_PATH',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(color: AppTheme.textMuted),
+                    ),
+                    const SizedBox(height: 16),
+                    RichText(
+                      text: TextSpan(
+                        style: Theme.of(
+                          context,
+                        ).textTheme.displayLarge?.copyWith(
+                              fontSize: Responsive.isMobile(context) ? 48 : 80,
+                            ),
+                        children: [
+                          const TextSpan(text: 'ENGINEERING\n'),
+                          TextSpan(
+                            text: 'EXPERIENCES',
+                            style: TextStyle(
+                              color: AppTheme.magentaAccent.withValues(alpha: 0.8),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Text(
-                      'SYS_EVAL_01 // 2021...2024...',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    )
-                    .animate(
-                      onPlay: (controller) => controller.repeat(reverse: true),
-                    )
-                    .shimmer(duration: 1500.ms, color: AppTheme.cyanAccent),
-              ],
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                          'SYS_EVAL_01 // 2021...2024...',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        )
+                        .animate(
+                          onPlay: (controller) => controller.repeat(reverse: true),
+                        )
+                        .shimmer(duration: 1500.ms, color: AppTheme.cyanAccent),
+                  ],
+                );
+              }
             ),
           ),
           const SizedBox(height: 80),
 
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: PortfolioData.experiences.length,
-            itemBuilder: (context, index) {
-              final exp = PortfolioData.experiences[index];
-              return VisibilityAnimator(
-                delay: Duration(milliseconds: 150 * index),
-                child: _ExperienceRow(item: exp, isLeft: index % 2 == 0),
-              );
-            },
+          Stack(
+            children: [
+              if (!Responsive.isMobile(context))
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: Container(
+                      width: 2,
+                      color: AppTheme.borderSide,
+                    ),
+                  ),
+                ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: PortfolioData.experiences.length,
+                itemBuilder: (context, index) {
+                  final exp = PortfolioData.experiences[index];
+                  return VisibilityAnimator(
+                    delay: Duration(milliseconds: 150 * index),
+                    child: _ExperienceRow(item: exp, isLeft: index % 2 == 0),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -90,16 +119,17 @@ class _ExperienceRowState extends State<_ExperienceRow> {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 80.0),
+      padding: EdgeInsets.only(bottom: isMobile ? 40.0 : 80.0),
       child: Row(
-        mainAxisAlignment: widget.isLeft
+        mainAxisAlignment: isMobile
             ? MainAxisAlignment.start
-            : MainAxisAlignment.end,
+            : (widget.isLeft ? MainAxisAlignment.start : MainAxisAlignment.end),
         children: [
-          if (!widget.isLeft) const Spacer(),
+          if (!widget.isLeft && !isMobile) const Spacer(),
           Expanded(
-            flex: 2,
+            flex: isMobile ? 1 : 2,
             child: MouseRegion(
               onEnter: (_) {
                 setState(() => _isHovering = true);
@@ -109,24 +139,36 @@ class _ExperienceRowState extends State<_ExperienceRow> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 transform: Matrix4.translationValues(
-                  _isHovering && widget.isLeft ? 10 : (_isHovering ? -10 : 0),
+                  !isMobile && _isHovering && widget.isLeft
+                      ? 10
+                      : (!isMobile && _isHovering ? -10 : 0),
                   0,
                   0,
                 ),
-                padding: const EdgeInsets.all(40),
+                padding: EdgeInsets.all(isMobile ? 24 : 40),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceHighlight,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: _isHovering
-                        ? AppTheme.cyanAccent
+                        ? AppTheme.magentaAccent
                         : AppTheme.borderSide,
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppTheme.surfaceHighlight,
+                      _isHovering 
+                        ? AppTheme.deepIndigo.withValues(alpha: 0.2)
+                        : AppTheme.surfaceHighlight,
+                    ],
                   ),
                   boxShadow: _isHovering
                       ? [
                           BoxShadow(
-                            color: AppTheme.cyanAccent.withValues(alpha: 0.1),
-                            blurRadius: 20,
+                            color: AppTheme.magentaAccent.withValues(alpha: 0.1),
+                            blurRadius: 30,
                             spreadRadius: 0,
                           ),
                         ]
@@ -138,14 +180,21 @@ class _ExperienceRowState extends State<_ExperienceRow> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          widget.item.company,
-                          style: Theme.of(context).textTheme.headlineMedium,
+                        Expanded(
+                          child: Text(
+                            widget.item.company,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontSize: isMobile ? 20 : 24,
+                                ),
+                          ),
                         ),
                         Icon(
-                          Icons.business,
+                          Icons.terminal_rounded,
                           color: _isHovering
-                              ? AppTheme.cyanAccent
+                              ? AppTheme.magentaAccent
                               : AppTheme.textSecondary,
                         ),
                       ],
@@ -154,8 +203,9 @@ class _ExperienceRowState extends State<_ExperienceRow> {
                     Text(
                       widget.item.role,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.cyanAccent,
-                      ),
+                            color: AppTheme.magentaAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 24),
                     if (widget.item.description.isNotEmpty)
@@ -178,7 +228,7 @@ class _ExperienceRowState extends State<_ExperienceRow> {
                                 width: 6,
                                 height: 6,
                                 decoration: const BoxDecoration(
-                                  color: AppTheme.cyanAccent,
+                                  color: AppTheme.magentaAccent,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -203,7 +253,7 @@ class _ExperienceRowState extends State<_ExperienceRow> {
               ),
             ),
           ),
-          if (widget.isLeft) const Spacer(),
+          if (widget.isLeft && !isMobile) const Spacer(),
         ],
       ),
     );
@@ -220,10 +270,15 @@ class _Tag extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppTheme.borderSide),
       ),
-      child: Text(text, style: Theme.of(context).textTheme.labelSmall),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppTheme.cyanAccent,
+            ),
+      ),
     );
   }
 }

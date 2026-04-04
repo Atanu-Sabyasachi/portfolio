@@ -16,11 +16,12 @@ class SectionContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: Responsive.isMobile(context) 
-            ? 24 
+        horizontal: isMobile 
+            ? MediaQuery.of(context).size.width * 0.06 
             : AppConstants.horizontalPadding,
       ),
       child: Center(
@@ -29,7 +30,10 @@ class SectionContainer extends StatelessWidget {
             maxWidth: AppConstants.desktopMaxWidth,
           ),
           child: Padding(
-            padding: EdgeInsets.only(top: topPadding, bottom: bottomPadding),
+            padding: EdgeInsets.only(
+              top: isMobile ? topPadding * 0.5 : topPadding, 
+              bottom: bottomPadding,
+            ),
             child: child,
           ),
         ),

@@ -7,6 +7,7 @@ import '../core/audio_manager.dart';
 import '../widgets/section_title.dart';
 import '../core/visibility_animator.dart';
 import '../widgets/glitch_text.dart';
+import '../layout/responsive.dart';
 import 'section_container.dart';
 
 class AboutSection extends StatelessWidget {
@@ -34,6 +35,7 @@ class AboutSection extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,11 +50,13 @@ class AboutSection extends StatelessWidget {
           text: 'ATANU SABYASACHI JENA',
           style: Theme.of(
             context,
-          ).textTheme.displayLarge?.copyWith(fontSize: 80),
+          ).textTheme.displayLarge?.copyWith(
+                fontSize: isMobile ? 48 : 80,
+              ),
         ),
         const SizedBox(height: 24),
-        SizedBox(
-          width: 600,
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
           child: Text(
             AppConstants.myLongDescription,
             style: Theme.of(context).textTheme.bodyLarge,
@@ -63,17 +67,39 @@ class AboutSection extends StatelessWidget {
   }
 
   Widget _buildExperienceLog(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Container(
-      padding: const EdgeInsets.all(48),
+      padding: EdgeInsets.all(isMobile ? 24 : 48),
       decoration: BoxDecoration(
         color: AppTheme.surfaceHighlight,
-        borderRadius: BorderRadius.circular(8),
-        border: Border(left: BorderSide(color: AppTheme.cyanAccent, width: 4)),
+        borderRadius: BorderRadius.circular(16), // Softer corners for M3
+        border: Border.all(color: AppTheme.borderSide),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.surfaceHighlight,
+            AppTheme.deepIndigo.withValues(alpha: 0.3),
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Icon(
+              Icons.flutter_dash,
+              size: 100,
+              color: AppTheme.cyanAccent.withValues(alpha: 0.05),
+            ),
+          ),
+          Flex(
+            direction: isMobile ? Axis.vertical : Axis.horizontal,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           Expanded(
+            flex: isMobile ? 0 : 1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -88,6 +114,7 @@ class AboutSection extends StatelessWidget {
                   '4+ YEARS OF FLUTTER EXCELLENCE',
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontStyle: FontStyle.italic,
+                    fontSize: isMobile ? 24 : 32,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -96,21 +123,22 @@ class AboutSection extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 24),
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
                   children: const [
                     _Tag('PRODUCTION READY'),
-                    SizedBox(width: 16),
                     _Tag('NATIVE BRIDGE'),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 48),
+          if (!isMobile) const SizedBox(width: 48) else const SizedBox(height: 32),
           Text(
                 '04',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontSize: 140,
+                  fontSize: isMobile ? 80 : 140,
                   color: AppTheme.surfaceHighlight.withValues(alpha: 0.5),
                   shadows: [
                     Shadow(
@@ -128,64 +156,99 @@ class AboutSection extends StatelessWidget {
                 duration: 2000.ms,
                 curve: Curves.easeInOutSine,
               ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   Widget _buildCoreModules(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionTitle(title: 'CORE_MODULES'),
-        Row(
-          children: const [
-            Expanded(
-              child: _ProgressCard(
+        if (isMobile)
+          Column(
+            children: const [
+              _ProgressCard(
                 title: 'FLUTTER & DART',
                 value: 95,
                 color: AppTheme.cyanAccent,
               ),
-            ),
-            SizedBox(width: 24),
-            Expanded(
-              child: _ProgressCard(
-                title: 'BLoC & MobX',
+              SizedBox(height: 16),
+              _ProgressCard(
+                title: 'BLoC & PROVIDER',
                 value: 90,
+                color: AppTheme.magentaAccent,
+              ),
+              SizedBox(height: 16),
+              _ProgressCard(
+                title: 'CLEAN ARCHITECTURE',
+                value: 88,
+                color: AppTheme.orangeAccent,
+              ),
+              SizedBox(height: 16),
+              _ProgressCard(
+                title: 'FIREBASE & CLOUD',
+                value: 92,
                 color: Colors.blueAccent,
               ),
-            ),
-            SizedBox(width: 24),
-            Expanded(
-              child: _ProgressCard(
-                title: 'CLEAN & SOLID',
-                value: 88,
-                color: AppTheme.successGreen,
+            ],
+          )
+        else
+          Row(
+            children: const [
+              Expanded(
+                child: _ProgressCard(
+                  title: 'FLUTTER & DART',
+                  value: 95,
+                  color: AppTheme.cyanAccent,
+                ),
               ),
-            ),
-            SizedBox(width: 24),
-            Expanded(
-              child: _ProgressCard(
-                title: 'FIREBASE & REST',
-                value: 92,
-                color: Colors.redAccent,
+              SizedBox(width: 24),
+              Expanded(
+                child: _ProgressCard(
+                  title: 'BLoC & PROVIDER',
+                  value: 90,
+                  color: AppTheme.magentaAccent,
+                ),
               ),
-            ),
-          ],
-        ),
+              SizedBox(width: 24),
+              Expanded(
+                child: _ProgressCard(
+                  title: 'CLEAN ARCHITECTURE',
+                  value: 88,
+                  color: AppTheme.orangeAccent,
+                ),
+              ),
+              SizedBox(width: 24),
+              Expanded(
+                child: _ProgressCard(
+                  title: 'FIREBASE & CLOUD',
+                  value: 92,
+                  color: Colors.blueAccent,
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
 
   Widget _buildSoftSystems(BuildContext context) {
+    bool isMobile = Responsive.isMobile(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionTitle(title: 'SOFT_SYSTEMS'),
-        Row(
+        Flex(
+          direction: isMobile ? Axis.vertical : Axis.horizontal,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              flex: isMobile ? 0 : 6,
               child: Column(
                 children: const [
                   _SoftSkillRow(
@@ -211,8 +274,9 @@ class AboutSection extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 64),
+            if (!isMobile) const SizedBox(width: 64) else const SizedBox(height: 48),
             Expanded(
+              flex: isMobile ? 0 : 4,
               child: Container(
                 padding: const EdgeInsets.all(40),
                 decoration: BoxDecoration(
@@ -258,9 +322,10 @@ class AboutSection extends StatelessWidget {
                                   style: Theme.of(context).textTheme.labelMedium
                                       ?.copyWith(
                                         color: AppTheme.background,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 2,
                                       ),
-                                ),
+                                  ),
                               ),
                             ),
                           ),
@@ -306,7 +371,13 @@ class _Tag extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(text, style: Theme.of(context).textTheme.labelSmall),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ],
       ),
     );
