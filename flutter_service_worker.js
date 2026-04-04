@@ -32,13 +32,14 @@ const RESOURCES = {"manifest.json": "d40c47d1c161f94dbcb13094d37f1f55",
 "assets/assets/audio/hover.mp3": "9b2ee257804f4dfae6229d334af353f0",
 "assets/assets/audio/card_transition.mp3": "087581747a6094b6719c24888174167d",
 "assets/assets/audio/notification.mp3": "ea3faf3e4b454e33ece6be82dcf7f1b0",
+"assets/resume-Atanu%20Sabyasachi%20Jena.pdf": "d15ad6cc858763ae658ff69a96eaa00e",
 "assets/shaders/stretch_effect.frag": "40d68efbbf360632f614c731219e95f0",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
-"assets/fonts/MaterialIcons-Regular.otf": "151d57a4d0a970d37082b68a790eab1d",
+"assets/fonts/MaterialIcons-Regular.otf": "59db35afd335cc08f7dde68d4106b8c9",
 "assets/AssetManifest.bin.json": "405b12bb9e4c6e6e372409a62f8de35f",
-"flutter_bootstrap.js": "65eb9fbabe43aebd137dcb721171e481",
+"flutter_bootstrap.js": "f86a1e98283ec3197e5364377d0cb88d",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
-"main.dart.js": "6dff395d9188100c64cf4901284f70fa"};
+"main.dart.js": "5efe6cc30dadb740ebb6d1da0f37a6f1"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
